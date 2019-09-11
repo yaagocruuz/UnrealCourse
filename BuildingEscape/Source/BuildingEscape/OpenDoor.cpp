@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Math/Rotator.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 
 
 // Sets default values for this component's properties
@@ -51,6 +52,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		AActor *Owner = GetOwner();
 		FRotator NewRotation = FRotator(0.f, 180.f, 0.f);
 		Owner->SetActorRotation(NewRotation);
+	}*/
+
+	/*for (const auto* Actor : PressurePlate->GetOverlappingActors( {
+		if (Actor->GetName() == "TriggerChair") {
+			OpenDoor();
+			LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+		}
 	}*/
 
 	//CHECK IF IT'S TIME TO CLOSE THE DOOR

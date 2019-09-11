@@ -42,4 +42,5 @@ private:
 
 	AActor *ActorThatOpens;
 	AActor *Owner; //the owning door
+	AActor *ChairThatOpens;
 };
