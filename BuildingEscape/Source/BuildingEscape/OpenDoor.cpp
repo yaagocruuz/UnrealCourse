@@ -5,7 +5,10 @@
 #include "Math/Rotator.h"
 #include "Engine/World.h"
 #include "EngineUtils.h"
+#include "Grabber.h"
+#include "Components/PrimitiveComponent.h"
 
+#define OUT
 
 // Sets default values for this component's properties
 UOpenDoor::UOpenDoor()
@@ -24,7 +27,7 @@ void UOpenDoor::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = GetOwner();
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
+	//ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 }
 
 void UOpenDoor::OpenDoor()
@@ -42,29 +45,39 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	if (GetTotalMassOfActorsOnPlate() > 30.f)
 	{
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 	}
-	/* else
-	{
-		AActor *Owner = GetOwner();
-		FRotator NewRotation = FRotator(0.f, 180.f, 0.f);
-		Owner->SetActorRotation(NewRotation);
-	}*/
 
-	/*for (const auto* Actor : PressurePlate->GetOverlappingActors( {
-		if (Actor->GetName() == "TriggerChair") {
-			OpenDoor();
-			LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-		}
-	}*/
+
+	//if (PressurePlate->IsOverlappingActor(ActorThatOpens))
+	//{
+	//	OpenDoor();
+	//	LastDoorOpenTime = GetWorld()->GetTimeSeconds();
+	//}
 
 	//CHECK IF IT'S TIME TO CLOSE THE DOOR
 	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorCloseDelay)
 	{
 		CloseDoor();
 	}
+}
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
+{
+	float TotalMass = 0.f;
+
+	TArray<AActor*> OverlappingActors;
+	PressurePlate->GetOverlappingActors(OUT OverlappingActors);
+
+	for (auto* Actor : OverlappingActors) 
+	{
+		TotalMass += Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+		UE_LOG(LogTemp, Error, TEXT("%s on pressure plate"), *Actor->GetName());
+	}
+
+	return TotalMass;
 }
 
